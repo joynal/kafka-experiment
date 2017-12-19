@@ -1,7 +1,7 @@
 'use strict';
 
 require('dotenv').config();
-const producer = require('./producers/providerProducer');
+const producer = require('./producers/root');
 const { sendToQueue } = require('./utils');
 
 sendToQueue(producer, 'providers', [

@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
 const queryString = require('querystring');
 
-const producer = require('../producers/providerProducer');
+const producer = require('../producers/root');
 const { sendToQueue } = require('../utils');
 
 const klaviyo = async (api, nextTopic, message) => {

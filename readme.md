@@ -4,7 +4,8 @@ Apache kafka message queue experiment with nodejs
 
 ## Pre-requisites
 
-Install kafka from official [guide](https://kafka.apache.org/quickstart).
+* Install kafka from official [guide](https://kafka.apache.org/quickstart).
+* Nodejs > 8.5.0, should run any version of 8.
 
 ## Step 1: Start the server
 
@@ -46,10 +47,10 @@ Copy .env.example to .env. Create a dummy campaign list at [klaviyo](https://kla
 ## Step 5: Start consumers
 
 ```
-$ node app/consumers/providerConsumer.js
-$ node app/consumers/consumerRetry5min.js
-$ node app/consumers/consumerRetry60min.js
-$ node app/consumers/consumerFailed.js
+$ node app/consumers/root.js
+$ node app/consumers/retryIn5min.js
+$ node app/consumers/retryIn60min.js
+$ node app/consumers/failed.js
 ```
 
 ## Step 6: Send data to producer
@@ -84,7 +85,7 @@ $ rm -rf /tmp/zookeeper/version-2/log.* && rm -rf /tmp/kafka-logs/
 
 Note: find port number with `ps aux | grep zookeeper.properties`
 
-## Authors
+## Author
 
 **Joynal Abedin** - [Joynal](https://twitter.com/joynaluu)
 

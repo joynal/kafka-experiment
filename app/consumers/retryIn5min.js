@@ -11,11 +11,11 @@ const Consumer = kafka.Consumer;
 const Client = kafka.KafkaClient;
 const client = new Client(process.env.KAFKA_SERVER_URL);
 
-const topics = [{topic: 'providers-retry-5min', partition: 0}];
+const topics = [{topic: process.env.RETRY_PRODUCER_1, partition: 0}];
 const consumer = new Consumer(client, topics);
 
 consumer.on('error', function (err) {
-  console.log('provider-retry-5min-consumer >> error', err);
+  console.log(`${process.env.RETRY_PRODUCER_1}-consumer >> error`, err);
 });
 
 consumer.on('offsetOutOfRange', offsetOutOfRangeCb(client));
@@ -28,5 +28,5 @@ consumer.on('message', async function (record) {
 
   if (diffTime < 5000) await sleep(5000 - diffTime);
 
-  addMemberToKlaviyo(process.env.KLAVIYO_URL, 'providers-retry-60min', message);
+  addMemberToKlaviyo(process.env.KLAVIYO_URL, process.env.RETRY_PRODUCER_2, message);
 });

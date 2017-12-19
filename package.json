@@ -16,7 +16,9 @@
     "date-fns": "^1.29.0",
     "dotenv": "^4.0.0",
     "faker": "^4.1.0",
+    "global": "^4.3.2",
     "kafka-node": "^2.3.0",
-    "node-fetch": "^1.7.3"
+    "node-fetch": "^1.7.3",
+    "nodemon": "^1.13.3"
   }
 }
