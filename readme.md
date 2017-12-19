@@ -1,6 +1,9 @@
 # Kafka experiment
 
-Apache kafka message queue experiment with nodejs
+This is a simple message queue with retry architecture. Each message contains a user data to subscribe an email campaign.
+The root consumer will try to subscribe a user to the campaign. If it fails then the message goes to the next queue with
+failing reason and timestamp, and the corresponding consumer will try again after five minutes. If it fails then next consumer
+will try again after one hour. If it fails then it will go to the failed queue, and this needs to handle manually.
 
 ## Pre-requisites
 
