@@ -8,7 +8,7 @@ will try again after one hour. If it fails then it will go to the failed queue, 
 ## Pre-requisites
 
 * Install kafka from official [guide](https://kafka.apache.org/quickstart).
-* Nodejs > 8.5.0, should run any version of 8.
+* Nodejs > 8.5.0, should run on any version of node 8.
 
 ## Step 1: Start the server
 
