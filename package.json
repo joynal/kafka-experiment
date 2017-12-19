@@ -1,0 +1,22 @@
+{
+  "name": "kafka-experiment",
+  "author": "Joynal Abedin <joynal.uu@gmail.com>",
+  "version": "0.0.1",
+  "description": "Kafka experiment",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "license": "MIT",
+  "keywords": [
+    "kafka",
+    "node",
+    "node-kafka"
+  ],
+  "dependencies": {
+    "date-fns": "^1.29.0",
+    "dotenv": "^4.0.0",
+    "faker": "^4.1.0",
+    "kafka-node": "^2.3.0",
+    "node-fetch": "^1.7.3"
+  }
+}
