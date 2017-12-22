@@ -15,7 +15,7 @@ const sendToQueue = (producer, topic, messages) => {
         topic: topic,
         partition: 0,
         messages: messages,
-        attributes: 2,
+        attributes: process.env.PRODUCER_ATTRIBUTES,
         timestamp: Date.now()
       }
     ], (err, result) => {
