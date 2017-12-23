@@ -28,5 +28,5 @@ consumer.on('message', async function (record) {
 
   if (diffTime < 5000) await sleep(5000 - diffTime);
 
-  addMemberToKlaviyo(process.env.KLAVIYO_URL, process.env.RETRY_PRODUCER_2, message);
+  addMemberToKlaviyo(message, process.env.RETRY_PRODUCER_2);
 });

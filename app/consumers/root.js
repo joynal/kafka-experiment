@@ -22,5 +22,5 @@ consumer.on('offsetOutOfRange', offsetOutOfRangeCb(client));
 consumer.on('message', function (record) {
   console.log(record);
   let message = JSON.parse(record.value);
-  addMemberToKlaviyo(process.env.KLAVIYO_URL, process.env.RETRY_PRODUCER_1, message);
+  addMemberToKlaviyo(message, process.env.RETRY_PRODUCER_1);
 });

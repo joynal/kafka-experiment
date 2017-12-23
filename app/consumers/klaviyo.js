@@ -4,9 +4,9 @@ const queryString = require('querystring');
 const producer = require('../producers/root');
 const { sendToQueue } = require('../utils');
 
-const klaviyo = async (api, nextTopic, message) => {
+module.exports = async (message, nextTopic = null) => {
   try {
-    const response = await fetch(api, {
+    const response = await fetch(process.env.KLAVIYO_URL, {
       method: 'post',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -25,11 +25,12 @@ const klaviyo = async (api, nextTopic, message) => {
     if (response.status !== 200) throw new Error(json.message);
   } catch (err) {
     console.log(err.message);
-    console.log(`Sending message to ${nextTopic}`);
-    message.timestamp = Date.now();
-    message.failingReason = err.message;
-    sendToQueue(producer, nextTopic, JSON.stringify(message));
+    
+    if (nextTopic) {
+      console.log(`Sending message to ${nextTopic}`);
+      message.timestamp = Date.now();
+      message.failingReason = err.message;
+      sendToQueue(producer, nextTopic, JSON.stringify(message));
+    }
   }
 };
-
-module.exports = klaviyo;
