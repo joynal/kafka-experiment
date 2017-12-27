@@ -56,6 +56,12 @@ $ node app/consumers/retryIn60min.js
 $ node app/consumers/failed.js
 ```
 
+Alternative way with pm2
+
+```
+$ pm2 start pm2.json
+```
+
 ## Step 6: Send data to producer
 
 ```

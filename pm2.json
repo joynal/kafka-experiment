@@ -1,0 +1,32 @@
+{
+  "apps": [
+    {
+      "name": "provider-root-consumer",
+      "PORT": 5001,
+      "script": "./app/consumers/root.js",
+      "instances": 1,
+      "exec_mode": "instances"
+    },
+    {
+      "name": "provider-retryIn5min-consumer",
+      "PORT": 5002,
+      "script": "./app/consumers/retryIn5min.js",
+      "instances": 1,
+      "exec_mode": "instances"
+    },
+    {
+      "name": "provider-retryIn60min-consumer",
+      "PORT": 5003,
+      "script": "./app/consumers/retryIn60min.js",
+      "instances": 1,
+      "exec_mode": "instances"
+    },
+    {
+      "name": "provider-failed-consumer",
+      "PORT": 5003,
+      "script": "./app/consumers/failed.js",
+      "instances": 1,
+      "exec_mode": "instances"
+    }
+  ]
+}
