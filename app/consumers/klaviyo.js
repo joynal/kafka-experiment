@@ -7,14 +7,15 @@ const { sendToQueue } = require('../utils');
 module.exports = async (message, nextTopic = null) => {
   try {
     const response = await fetch(process.env.KLAVIYO_URL, {
-      method: 'post',
+      method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        "Accept": "application/json"
       },
       body: queryString.stringify({
         api_key: message.api_key,
         email: message.email,
-        properties: message.properties,
+        properties: JSON.stringify(message.properties),
         confirm_optin: message.confirm_optin
       }),
     });
