@@ -23,7 +23,7 @@ $ bin/kafka-server-start.sh config/server.properties &
 
 ## Step 2: Create topics
 ```
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers
+$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 4 --topic providers
 $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-retry-5min
 $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-retry-60min
 $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-failed
@@ -65,10 +65,31 @@ $ pm2 start pm2.json
 ## Step 6: Send data to producer
 
 ```
-$ node app/index.js
+$ node test.js
 Sent msg number 0
 ...
 Sent msg number 1000
+```
+
+## Remote listener binding
+
+Hostname and port the broker will advertise to producers and consumers. If not set,
+it uses the value for "listeners" if configured.  Otherwise, it will use the value
+returned from java.net.InetAddress.getCanonicalHostName().
+```
+#advertised.listeners=PLAINTEXT://your.host.name:9092
+```
+
+## Useful commands
+
+Describe a topic:
+```
+bin/kafka-topics.sh --describe --zookeeper localhost:2182,localhost:2183,localhost:2184 --topic notifications
+```
+
+Increase topic partitions:
+```
+bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic notifications --partitions 4
 ```
 
 ## Cleaning Up
