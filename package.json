@@ -1,7 +1,7 @@
 {
   "name": "kafka-experiment",
   "author": "Joynal Abedin <joynal.uu@gmail.com>",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Kafka experiment",
   "scripts": {
     "start": "node server.js"
@@ -18,5 +18,10 @@
     "faker": "^4.1.0",
     "kafka-node": "^2.3.0",
     "node-fetch": "^1.7.3"
+  },
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^12.1.0",
+    "eslint-plugin-import": "^2.11.0"
   }
 }
