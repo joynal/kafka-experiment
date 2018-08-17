@@ -1,24 +1,23 @@
-'use strict';
-
 require('dotenv').config();
 const kafka = require('kafka-node');
 
-const { offsetOutOfRangeCb } = require('../utils');
+const { ConsumerGroup } = kafka;
+const { gracefulShutdown } = require('../utils');
 
-const Consumer = kafka.Consumer;
-const Client = kafka.KafkaClient;
-const client = new Client(process.env.KAFKA_SERVER_URL);
+const options = {
+  kafkaHost: process.env.KAFKA_SERVER_URL,
+  groupId: 'ProviderGroup',
+};
 
-const topics = [{topic: process.env.FAILED_PRODUCER, partition: 0}];
-const options = { autoCommit: false };
-const consumer = new Consumer(client, topics, options);
+const consumerGroup = new ConsumerGroup(options, process.env.FAILED_PRODUCER);
 
-consumer.on('error', function (err) {
+consumerGroup.on('message', (message) => {
+  console.log(message);
+});
+
+consumerGroup.on('error', (err) => {
   console.log(`${process.env.FAILED_PRODUCER}-consumer >> error`, err);
 });
 
-consumer.on('offsetOutOfRange', offsetOutOfRangeCb(client));
-
-consumer.on('message', function (message) {
-  console.log(message);
-});
+process.on('SIGINT', gracefulShutdown(consumerGroup));
+process.on('SIGTERM', gracefulShutdown(consumerGroup));

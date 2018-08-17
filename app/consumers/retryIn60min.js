@@ -1,28 +1,22 @@
-'use strict';
-
 require('dotenv').config();
 const kafka = require('kafka-node');
 const differenceInMilliseconds = require('date-fns/difference_in_milliseconds');
 
-const { offsetOutOfRangeCb, sleep } = require('../utils');
+const { gracefulShutdown, sleep } = require('../utils');
 const addMemberToKlaviyo = require('./klaviyo');
 
-const Consumer = kafka.Consumer;
-const Client = kafka.KafkaClient;
-const client = new Client(process.env.KAFKA_SERVER_URL);
+const { ConsumerGroup } = kafka;
 
-const topics = [{topic: process.env.RETRY_PRODUCER_2, partition: 0}];
-const consumer = new Consumer(client, topics);
+const options = {
+  kafkaHost: process.env.KAFKA_SERVER_URL,
+  groupId: 'ProviderGroup',
+};
 
-consumer.on('error', function (err) {
-  console.log(`${process.env.RETRY_PRODUCER_2}-consumer >> error`, err);
-});
-
-consumer.on('offsetOutOfRange', offsetOutOfRangeCb(client));
+const consumerGroup = new ConsumerGroup(options, process.env.RETRY_PRODUCER_2);
 
 // Retry after one hour
-consumer.on('message', async function (record) {
-  let message = JSON.parse(record.value);
+consumerGroup.on('message', async (record) => {
+  const message = JSON.parse(record.value);
   const diffTime = differenceInMilliseconds(Date.now(), message.timestamp);
 
   if (diffTime < 60000) await sleep(60000 - diffTime);
@@ -30,3 +24,9 @@ consumer.on('message', async function (record) {
   addMemberToKlaviyo(message, process.env.FAILED_PRODUCER);
 });
 
+consumerGroup.on('error', (err) => {
+  console.log(`${process.env.RETRY_PRODUCER_2}-consumer >> error`, err);
+});
+
+process.on('SIGINT', gracefulShutdown(consumerGroup));
+process.on('SIGTERM', gracefulShutdown(consumerGroup));

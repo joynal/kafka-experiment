@@ -1,26 +1,27 @@
-'use strict';
-
 require('dotenv').config();
 const kafka = require('kafka-node');
 
-const { offsetOutOfRangeCb } = require('../utils');
+const { gracefulShutdown } = require('../utils');
 const addMemberToKlaviyo = require('./klaviyo');
 
-const Consumer = kafka.Consumer;
-const Client = kafka.KafkaClient;
-const client = new Client(process.env.KAFKA_SERVER_URL);
+const { ConsumerGroup } = kafka;
 
-const topics = [{topic: process.env.ROOT_PRODUCER, partition: 0}];
-const consumer = new Consumer(client, topics);
+const options = {
+  kafkaHost: process.env.KAFKA_SERVER_URL,
+  groupId: 'ProviderGroup',
+};
 
-consumer.on('error', function (err) {
+const consumerGroup = new ConsumerGroup(options, process.env.ROOT_PRODUCER);
+
+consumerGroup.on('message', (record) => {
+  console.log(record);
+  const message = JSON.parse(record.value);
+  addMemberToKlaviyo(message, process.env.RETRY_PRODUCER_1);
+});
+
+consumerGroup.on('error', (err) => {
   console.log(`${process.env.ROOT_PRODUCER}-consumer >> error`, err);
 });
 
-consumer.on('offsetOutOfRange', offsetOutOfRangeCb(client));
-
-consumer.on('message', function (record) {
-  console.log(record);
-  let message = JSON.parse(record.value);
-  addMemberToKlaviyo(message, process.env.RETRY_PRODUCER_1);
-});
+process.on('SIGINT', gracefulShutdown(consumerGroup));
+process.on('SIGTERM', gracefulShutdown(consumerGroup));
