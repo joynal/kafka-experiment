@@ -1,46 +1,55 @@
-'use strict';
-
 require('dotenv').config();
 const kafka = require('kafka-node');
-const Offset = kafka.Offset;
+
+const { Offset } = kafka;
 
 // JS sleep helper
-const sleep = time => new Promise((resolve) => setTimeout(resolve, time));
+const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 // provider helper
 const sendToQueue = (producer, topic, messages) => {
   producer.send(
     [
       {
-        topic: topic,
-        partition: 0,
-        messages: messages,
+        topic,
+        messages,
         attributes: process.env.PRODUCER_ATTRIBUTES,
-        timestamp: Date.now()
-      }
-    ], (err, result) => {
-      if(err) console.log(err);
-      if (result && result.providers) console.log("Sent msg number", result.providers[0]);
-    })
+        timestamp: Date.now(),
+      },
+    ],
+    (err, result) => {
+      console.log('Sent message at --->', err || result);
+    },
+  );
 };
 
 /*
 * If consumer get `offsetOutOfRange` event, fetch data from the smallest(oldest) offset
 */
-const offsetOutOfRangeCb = client => topic => {
+const offsetOutOfRangeCb = (client, consumer) => (topic) => {
   const offset = new Offset(client);
-  topic.maxNum = 2;
-  offset.fetch([topic], function (err, offsets) {
+  const topicUpdated = topic;
+  topicUpdated.maxNum = 2;
+  offset.fetch([topicUpdated], (err, offsets) => {
     if (err) {
       return console.error(err);
     }
-    const min = Math.min(offsets[topic.topic][topic.partition]);
-    consumer.setOffset(topic.topic, topic.partition, min);
+    const min = Math.min(offsets[topicUpdated.topic][topicUpdated.partition]);
+    return consumer.setOffset(topicUpdated.topic, topicUpdated.partition, min);
+  });
+};
+
+const gracefulShutdown = consumer => () => {
+  console.log('Shutdown started....');
+  consumer.close((err) => {
+    console.log('Kafka connection closed >>>>>');
+    process.exit(err ? 1 : 0);
   });
 };
 
 module.exports = {
   sleep,
   sendToQueue,
-  offsetOutOfRangeCb
+  offsetOutOfRangeCb,
+  gracefulShutdown,
 };
