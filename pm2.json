@@ -1,32 +1,80 @@
 {
   "apps": [
     {
-      "name": "provider-root-consumer",
+      "name": "mq-provider-root-consumer",
       "PORT": 5001,
       "script": "./app/consumers/root.js",
-      "instances": 1,
-      "exec_mode": "instances"
+      "instances": "max",
+      "exec_mode": "cluster",
+      "combine_logs": true,
+      "out_file": "./logs/mq-root-consumer-out.log",
+      "error_file": "./logs/mq-root-consumer-error.log",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      },
+      "env_staging": {
+        "NODE_ENV": "staging"
+      }
     },
     {
-      "name": "provider-retryIn5min-consumer",
+      "name": "mq-provider-retryIn5min-consumer",
       "PORT": 5002,
       "script": "./app/consumers/retryIn5min.js",
       "instances": 1,
-      "exec_mode": "instances"
+      "exec_mode": "instances",
+      "combine_logs": true,
+      "out_file": "./logs/mq-retryIn5min-out.log",
+      "error_file": "./logs/mq-retryIn5min-error.log",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      },
+      "env_staging": {
+        "NODE_ENV": "staging"
+      }
     },
     {
-      "name": "provider-retryIn60min-consumer",
+      "name": "mq-provider-retryIn60min-consumer",
       "PORT": 5003,
       "script": "./app/consumers/retryIn60min.js",
       "instances": 1,
-      "exec_mode": "instances"
+      "exec_mode": "instances",
+      "combine_logs": true,
+      "out_file": "./logs/mq-retryIn60min-out.log",
+      "error_file": "./logs/mq-retryIn60min-error.log",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      },
+      "env_staging": {
+        "NODE_ENV": "staging"
+      }
     },
     {
-      "name": "provider-failed-consumer",
+      "name": "mq-provider-failed-consumer",
       "PORT": 5003,
       "script": "./app/consumers/failed.js",
       "instances": 1,
-      "exec_mode": "instances"
+      "exec_mode": "instances",
+      "combine_logs": true,
+      "out_file": "./logs/mq-failed-out.log",
+      "error_file": "./logs/mq-failed-error.log",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      },
+      "env_staging": {
+        "NODE_ENV": "staging"
+      }
     }
   ]
 }
