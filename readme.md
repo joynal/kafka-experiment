@@ -1,9 +1,9 @@
 # Kafka experiment
 
-This is a simple message queue with retry architecture. Each message contains a user data to subscribe an email campaign.
-The root consumer will try to subscribe a user to the campaign. If it fails then the message goes to the next queue with
-failing reason and timestamp, and the corresponding consumer will try again after five minutes. If it fails then next consumer
-will try again after one hour. If it fails then it will go to the failed queue, and this needs to handle manually.
+This is a simple message queue with retry architecture. Each message contains subscription data for an email campaign.
+The root consumer will try to add the subscription to the campaign. If this fails then the message will handover to retry
+consumer with failing reason and timestamp. If the retry consumer fails then it will go to the failed queue,
+and this needs to handle manually.
 
 ## Pre-requisites
 
@@ -24,17 +24,15 @@ $ bin/kafka-server-start.sh config/server.properties &
 ## Step 2: Create topics
 ```
 $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 4 --topic providers
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-retry-5min
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-retry-60min
+$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-retry
 $ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-failed
 ```
 These can be easily listed
 ```
 $ bin/kafka-topics.sh --list --zookeeper localhost:2181
 providers
-providers-retry-5min
-providers-retry-60min
-providers-retry-failed
+providers-retry
+providers-failed
 ```
 Note: In production disable topics auto creation `auto.create.topics.enable=false`
 
@@ -51,8 +49,7 @@ Copy .env.example to .env. Create a dummy campaign list at [klaviyo](https://kla
 
 ```
 $ node app/consumers/root.js
-$ node app/consumers/retryIn5min.js
-$ node app/consumers/retryIn60min.js
+$ node app/consumers/retry.js
 $ node app/consumers/failed.js
 ```
 

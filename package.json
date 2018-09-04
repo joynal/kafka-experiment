@@ -4,7 +4,7 @@
   "version": "0.0.2",
   "description": "Kafka experiment",
   "scripts": {
-    "start": "node server.js"
+    "start": "node ./app/consumers/root.js"
   },
   "license": "MIT",
   "keywords": [

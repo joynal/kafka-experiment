@@ -20,33 +20,14 @@
       }
     },
     {
-      "name": "mq-provider-retryIn5min-consumer",
+      "name": "mq-provider-retry-consumer",
       "PORT": 5002,
-      "script": "./app/consumers/retryIn5min.js",
+      "script": "./app/consumers/retry.js",
       "instances": 1,
       "exec_mode": "instances",
       "combine_logs": true,
-      "out_file": "./logs/mq-retryIn5min-out.log",
-      "error_file": "./logs/mq-retryIn5min-error.log",
-      "env": {
-        "NODE_ENV": "development"
-      },
-      "env_production": {
-        "NODE_ENV": "production"
-      },
-      "env_staging": {
-        "NODE_ENV": "staging"
-      }
-    },
-    {
-      "name": "mq-provider-retryIn60min-consumer",
-      "PORT": 5003,
-      "script": "./app/consumers/retryIn60min.js",
-      "instances": 1,
-      "exec_mode": "instances",
-      "combine_logs": true,
-      "out_file": "./logs/mq-retryIn60min-out.log",
-      "error_file": "./logs/mq-retryIn60min-error.log",
+      "out_file": "./logs/mq-retry-out.log",
+      "error_file": "./logs/mq-retry-error.log",
       "env": {
         "NODE_ENV": "development"
       },

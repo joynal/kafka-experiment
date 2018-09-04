@@ -2,7 +2,7 @@ require('dotenv').config();
 const kafka = require('kafka-node');
 
 const { gracefulShutdown } = require('../utils');
-const addMemberToKlaviyo = require('./klaviyo');
+const addSubscriberToCampaign = require('../providerIntegration');
 
 const { ConsumerGroup } = kafka;
 
@@ -16,7 +16,7 @@ const consumerGroup = new ConsumerGroup(options, process.env.ROOT_PRODUCER);
 consumerGroup.on('message', (record) => {
   console.log(record);
   const message = JSON.parse(record.value);
-  addMemberToKlaviyo(message, process.env.RETRY_PRODUCER_1);
+  addSubscriberToCampaign(message, process.env.RETRY_PRODUCER);
 });
 
 consumerGroup.on('error', (err) => {
