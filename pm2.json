@@ -1,11 +1,11 @@
 {
   "apps": [
     {
-      "name": "mq-provider-root-consumer",
+      "name": "provider-service",
       "PORT": 5001,
-      "script": "./app/consumers/root.js",
-      "instances": "max",
-      "exec_mode": "cluster",
+      "script": "./src/provider.js",
+      "instances": 2,
+      "exec_mode": "fork",
       "combine_logs": true,
       "out_file": "./logs/mq-root-consumer-out.log",
       "error_file": "./logs/mq-root-consumer-error.log",

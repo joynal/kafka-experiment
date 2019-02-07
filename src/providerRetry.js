@@ -1,18 +1,19 @@
-require('dotenv').config();
 const kafka = require('kafka-node');
 const differenceInMilliseconds = require('date-fns/difference_in_milliseconds');
 
-const { gracefulShutdown, sleep } = require('../utils');
-const addSubscriberToCampaign = require('../providerIntegration');
+const { gracefulShutdown, sleep } = require('./helpers/utils');
+const addSubscriberToCampaign = require('./helpers/providerIntegration');
+
+const config = require('./config');
 
 const { ConsumerGroup } = kafka;
 
 const options = {
-  kafkaHost: process.env.KAFKA_SERVER_URL,
+  kafkaHost: config.kafkaServerUrl,
   groupId: 'ProviderGroup',
 };
 
-const consumerGroup = new ConsumerGroup(options, process.env.RETRY_PRODUCER);
+const consumerGroup = new ConsumerGroup(options, config.providerRetryTopic);
 
 // Retry after 5 minute
 consumerGroup.on('message', async (record) => {
@@ -20,13 +21,13 @@ consumerGroup.on('message', async (record) => {
   const message = JSON.parse(record.value);
   const diffTime = differenceInMilliseconds(Date.now(), message.timestamp);
 
-  if (diffTime < process.env.RETRY_INTERVAL) await sleep(process.env.RETRY_INTERVAL - diffTime);
+  if (diffTime < config.retryInterval) await sleep(config.retryInterval - diffTime);
 
-  addSubscriberToCampaign(message, process.env.FAILED_PRODUCER);
+  addSubscriberToCampaign(message, config.providerFailedTopic);
 });
 
 consumerGroup.on('error', (err) => {
-  console.log(`${process.env.RETRY_PRODUCER}-consumer >> error`, err);
+  console.log(`${config.providerRetryTopic}-consumer error ---------->`, err);
 });
 
 process.on('SIGINT', gracefulShutdown(consumerGroup));

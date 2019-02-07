@@ -1,7 +1,7 @@
-require('dotenv').config();
 const kafka = require('kafka-node');
 
 const { Offset } = kafka;
+const config = require('../config');
 
 // JS sleep helper
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
@@ -13,7 +13,7 @@ const sendToQueue = (producer, topic, messages) => {
       {
         topic,
         messages,
-        attributes: process.env.PRODUCER_ATTRIBUTES,
+        attributes: config.producerAttributes,
         timestamp: Date.now(),
       },
     ],

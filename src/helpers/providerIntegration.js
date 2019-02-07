@@ -1,13 +1,14 @@
-require('dotenv').config();
 const fetch = require('node-fetch');
 const queryString = require('querystring');
 
 const producer = require('./producer');
 const { sendToQueue } = require('./utils');
 
+const config = require('../config');
+
 module.exports = async (message, nextTopic = null) => {
   try {
-    const response = await fetch(process.env.KLAVIYO_URL, {
+    const response = await fetch(config.klaviyoURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -22,11 +23,10 @@ module.exports = async (message, nextTopic = null) => {
     });
 
     const json = await response.json();
-    console.log('statusCode >>', response.status);
-    console.log('Klaviyo response >>', json);
+    console.log('Klaviyo response ----------->', json);
     if (response.status !== 200) throw new Error(json.message);
   } catch (err) {
-    console.log(err.message);
+    console.error('Klaviyo sending error ----------->', err);
 
     if (nextTopic) {
       console.log(`Sending message to ${nextTopic}`);

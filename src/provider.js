@@ -1,26 +1,28 @@
 require('dotenv').config();
 const kafka = require('kafka-node');
 
-const { gracefulShutdown } = require('../utils');
-const addSubscriberToCampaign = require('../providerIntegration');
+const { gracefulShutdown } = require('./helpers/utils');
+const addSubscriberToCampaign = require('./helpers/providerIntegration');
+
+const config = require('./config');
 
 const { ConsumerGroup } = kafka;
 
 const options = {
-  kafkaHost: process.env.KAFKA_SERVER_URL,
+  kafkaHost: config.kafkaServerUrl,
   groupId: 'ProviderGroup',
 };
 
-const consumerGroup = new ConsumerGroup(options, process.env.ROOT_PRODUCER);
+const consumerGroup = new ConsumerGroup(options, config.providerTopic);
 
 consumerGroup.on('message', (record) => {
   console.log(record);
   const message = JSON.parse(record.value);
-  addSubscriberToCampaign(message, process.env.RETRY_PRODUCER);
+  addSubscriberToCampaign(message, config.providerRetryTopic);
 });
 
 consumerGroup.on('error', (err) => {
-  console.log(`${process.env.ROOT_PRODUCER}-consumer >> error`, err);
+  console.error(`${config.providerTopic}-consumer error ---------->`, err);
 });
 
 process.on('SIGINT', gracefulShutdown(consumerGroup));
