@@ -1,9 +1,9 @@
 # Kafka experiment
 
-This is a simple message queue with retry architecture. Each message contains subscription data for an email campaign.
-The root consumer will try to add the subscription to the campaign. If this fails then the message will handover to retry
+Simple Apache Kafka queue demonstration with retry option. Every Kafka message contains subscription data for an email campaign.
+The provider consumer will try to add the subscription to the campaign. If this fails then the message will handover to retry
 consumer with failing reason and timestamp. If the retry consumer fails then it will go to the failed queue,
-and this needs to handle manually.
+and this needs to be handled manually.
 
 ## Pre-requisites
 
@@ -23,22 +23,22 @@ $ bin/kafka-server-start.sh config/server.properties &
 
 ## Step 2: Create topics
 ```
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 4 --topic providers
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-retry
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 1 --topic providers-failed
+$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 4 --topic provider
+$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic provider-retry
+$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic provider-failed
 ```
 These can be easily listed
 ```
 $ bin/kafka-topics.sh --list --zookeeper localhost:2181
-providers
-providers-retry
-providers-failed
+provider
+provider-retry
+provider-failed
 ```
 Note: In production disable topics auto creation `auto.create.topics.enable=false`
 
 ## Step 3: Install package from npm
 ```
-$ yarn
+$ npm i
 ```
 
 ## Step 4: Setup environment variables
@@ -48,9 +48,9 @@ Copy .env.example to .env. Create a dummy campaign list at [klaviyo](https://kla
 ## Step 5: Start consumers
 
 ```
-$ node app/consumers/root.js
-$ node app/consumers/retry.js
-$ node app/consumers/failed.js
+$ node src/provider.js
+$ node src/providerRetry.js
+$ node src/providerFailed.js
 ```
 
 Alternative way with pm2
@@ -81,12 +81,12 @@ returned from java.net.InetAddress.getCanonicalHostName().
 
 Describe a topic:
 ```
-bin/kafka-topics.sh --describe --zookeeper localhost:2182,localhost:2183,localhost:2184 --topic notifications
+bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic provider
 ```
 
 Increase topic partitions:
 ```
-bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic notifications --partitions 4
+bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic provider --partitions 4
 ```
 
 ## Cleaning Up

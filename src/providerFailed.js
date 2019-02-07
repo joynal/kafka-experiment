@@ -7,7 +7,7 @@ const config = require('./config');
 
 const options = {
   kafkaHost: config.kafkaServerUrl,
-  groupId: 'ProviderGroup',
+  groupId: 'ProviderFailedGroup',
 };
 
 const consumerGroup = new ConsumerGroup(options, config.providerFailedTopic);
@@ -17,7 +17,7 @@ consumerGroup.on('message', (message) => {
 });
 
 consumerGroup.on('error', (err) => {
-  console.log(`${config.providerFailedTopic}-consumer error ---------->`, err);
+  console.error(`${config.providerFailedTopic}-consumer error ---------->`, err);
 });
 
 process.on('SIGINT', gracefulShutdown(consumerGroup));

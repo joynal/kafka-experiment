@@ -2,7 +2,7 @@ const kafka = require('kafka-node');
 const differenceInMilliseconds = require('date-fns/difference_in_milliseconds');
 
 const { gracefulShutdown, sleep } = require('./helpers/utils');
-const addSubscriberToCampaign = require('./helpers/providerIntegration');
+const addSubscriberToCampaign = require('./helpers/integration');
 
 const config = require('./config');
 
@@ -10,7 +10,7 @@ const { ConsumerGroup } = kafka;
 
 const options = {
   kafkaHost: config.kafkaServerUrl,
-  groupId: 'ProviderGroup',
+  groupId: 'ProviderRetryGroup',
 };
 
 const consumerGroup = new ConsumerGroup(options, config.providerRetryTopic);
@@ -27,7 +27,7 @@ consumerGroup.on('message', async (record) => {
 });
 
 consumerGroup.on('error', (err) => {
-  console.log(`${config.providerRetryTopic}-consumer error ---------->`, err);
+  console.error(`${config.providerRetryTopic}-consumer error ---------->`, err);
 });
 
 process.on('SIGINT', gracefulShutdown(consumerGroup));

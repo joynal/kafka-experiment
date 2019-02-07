@@ -1,8 +1,7 @@
-require('dotenv').config();
 const kafka = require('kafka-node');
 
 const { gracefulShutdown } = require('./helpers/utils');
-const addSubscriberToCampaign = require('./helpers/providerIntegration');
+const sendToIntegration = require('./helpers/integration');
 
 const config = require('./config');
 
@@ -16,9 +15,8 @@ const options = {
 const consumerGroup = new ConsumerGroup(options, config.providerTopic);
 
 consumerGroup.on('message', (record) => {
-  console.log(record);
   const message = JSON.parse(record.value);
-  addSubscriberToCampaign(message, config.providerRetryTopic);
+  sendToIntegration(message, config.providerRetryTopic);
 });
 
 consumerGroup.on('error', (err) => {

@@ -1,0 +1,24 @@
+{
+  "apps": [
+    {
+      "name": "provider-service",
+      "PORT": 5010,
+      "script": "./src/provider.js",
+      "instances": 2,
+      "exec_mode": "fork",
+      "combine_logs": false,
+      "kill_timeout": 5000,
+      "out_file": "./logs/provider/out.log",
+      "error_file": "./logs/provider/error.log",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_staging": {
+        "NODE_ENV": "staging"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}

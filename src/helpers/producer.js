@@ -1,6 +1,6 @@
 const kafka = require('kafka-node');
 
-const { Producer } = kafka;
+const { HighLevelProducer } = kafka;
 const Client = kafka.KafkaClient;
 
 const config = require('../config');
@@ -13,7 +13,7 @@ const client = new Client({
   },
 });
 
-const producer = new Producer(client, {
+const producer = new HighLevelProducer(client, {
   requireAcks: config.producerAcks,
 });
 

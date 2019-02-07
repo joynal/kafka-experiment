@@ -4,7 +4,7 @@
   "version": "0.0.2",
   "description": "Kafka experiment",
   "scripts": {
-    "start": "node ./app/consumers/root.js"
+    "start": "node ./src/provider.js"
   },
   "license": "MIT",
   "keywords": [
@@ -16,7 +16,7 @@
     "date-fns": "^1.29.0",
     "dotenv": "^4.0.0",
     "faker": "^4.1.0",
-    "kafka-node": "^2.3.0",
+    "kafka-node": "^3.0.1",
     "node-fetch": "^1.7.3"
   },
   "devDependencies": {
