@@ -7,21 +7,23 @@ const config = require('../config');
 const sleep = time => new Promise(resolve => setTimeout(resolve, time));
 
 // provider helper
-const sendToQueue = (producer, topic, messages) => {
-  producer.send(
+const sendToQueue = (prod, topic, messages) => {
+  prod.send(
     [
       {
         topic,
         messages,
-        attributes: config.producerAttributes,
+        attributes: config.attributes,
         timestamp: Date.now(),
       },
     ],
     (err, result) => {
-      console.log('Sent message at --->', err || result);
+      if (err) console.error('send to queue error -------->', err);
+      if (result) console.log('sent message at -------->', result);
     },
   );
 };
+
 
 /*
 * If consumer get `offsetOutOfRange` event, fetch data from the smallest(oldest) offset
@@ -40,9 +42,9 @@ const offsetOutOfRangeCb = (client, consumer) => (topic) => {
 };
 
 const gracefulShutdown = consumer => () => {
-  console.log('Shutdown started....');
+  console.log('Shutdown started --------->');
   consumer.close((err) => {
-    console.log('Kafka connection closed >>>>>');
+    console.log('Kafka connection closed --------->');
     process.exit(err ? 1 : 0);
   });
 };
