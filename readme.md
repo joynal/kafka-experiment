@@ -52,7 +52,6 @@ Copy .env.example to .env. Create a dummy campaign list at [klaviyo](https://kla
 ```
 $ node src/provider.js
 $ node src/providerRetry.js
-$ node src/providerFailed.js
 ```
 
 Alternative way with pm2
