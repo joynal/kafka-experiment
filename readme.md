@@ -1,9 +1,11 @@
-# Kafka experiment
+# Overview
 
 Simple Apache Kafka queue demonstration with retry option. Every Kafka message contains subscription data for an email campaign.
 The provider consumer will try to add the subscription to the campaign. If this fails then the message will handover to retry
 consumer with failing reason and timestamp. If the retry consumer fails then it will go to the failed queue,
 and this needs to be handled manually.
+
+![Alt text](images/architecture.png "Kafka demo architecture")
 
 ## Pre-requisites
 
