@@ -97,7 +97,7 @@ Stop Kafka and Zookeeper and delete the log directories
 $ project-dir
 bin/kafka-server-start.sh config/server.properties
 ^C
-$ kill -9 [PORT]
+$ kill -9 [PID]
 ```
 
 ```
@@ -111,7 +111,7 @@ $ kill -9 [PID]
 $ rm -rf /tmp/zookeeper/version-2/log.* && rm -rf /tmp/kafka-logs/
 ```
 
-Note: find port number with `ps aux | grep zookeeper.properties`
+Note: find process id number with `ps aux | grep zookeeper.properties`
 
 ## Author
 
