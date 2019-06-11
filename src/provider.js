@@ -15,8 +15,7 @@ const options = {
 const consumerGroup = new ConsumerGroup(options, config.providerTopic);
 
 consumerGroup.on('message', (record) => {
-  const message = JSON.parse(record.value);
-  sendToIntegration(message, config.providerRetryTopic);
+  sendToIntegration(record.value, config.providerRetryTopic);
 });
 
 consumerGroup.on('error', (err) => {

@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const queryString = require('querystring');
 
 const producer = require('./producer');
 const { sendToQueue } = require('./utils');
@@ -11,15 +10,11 @@ module.exports = async (message, nextTopic = null) => {
     const response = await fetch(config.klaviyoURL, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
         Accept: 'application/json',
+        'api-key': config.klaviyoApiKey,
       },
-      body: queryString.stringify({
-        api_key: message.api_key,
-        email: message.email,
-        properties: JSON.stringify(message.properties),
-        confirm_optin: message.confirm_optin,
-      }),
+      body: message,
     });
 
     const json = await response.json();
@@ -30,7 +25,7 @@ module.exports = async (message, nextTopic = null) => {
 
     if (nextTopic) {
       console.log(`Sending message to ${nextTopic}`);
-      const messageCopy = message;
+      const messageCopy = JSON.parse(message);
       messageCopy.timestamp = Date.now();
       messageCopy.failingReason = err.message;
       sendToQueue(producer, nextTopic, JSON.stringify(messageCopy));

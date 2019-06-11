@@ -23,7 +23,7 @@ consumerGroup.on('message', async (record) => {
 
   if (diffTime < config.retryInterval) await sleep(config.retryInterval - diffTime);
 
-  addSubscriberToCampaign(message, config.providerFailedTopic);
+  addSubscriberToCampaign(JSON.stringify(message), config.providerFailedTopic);
 });
 
 consumerGroup.on('error', (err) => {
