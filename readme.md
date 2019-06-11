@@ -66,7 +66,7 @@ $ pm2 start pm2.json
 ## Step 6: Send data to producer
 
 ```
-$ node test.js
+$ node test/sendTestData.js
 Sent msg number 0
 ...
 Sent msg number 1000
