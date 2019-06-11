@@ -4,14 +4,15 @@
     "no-underscore-dangle": 0,
     "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
     "no-use-before-define": ["error", { "variables": false }],
-    "no-multi-str": 0
+    "no-multi-str": 0,
+    "no-continue": 0
   },
   "env": {
     "node": true,
     "mocha": true
   },
   "parserOptions": {
-    "ecmaVersion": 8
+    "ecmaVersion": 9
   },
   "extends": [
     "airbnb-base"
