@@ -17,7 +17,7 @@
     "dotenv": "^8.0.0",
     "faker": "^4.1.0",
     "kafka-node": "^3.0.1",
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.1"
   },
   "devDependencies": {
     "eslint": "^6.3.0",
