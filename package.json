@@ -13,15 +13,15 @@
     "node-kafka"
   ],
   "dependencies": {
-    "date-fns": "^1.30.1",
-    "dotenv": "^8.0.0",
-    "faker": "^4.1.0",
-    "kafka-node": "^3.0.1",
-    "node-fetch": "^2.6.7"
+    "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
+    "faker": "^6.6.6",
+    "kafka-node": "^5.0.0",
+    "node-fetch": "^3.3.1"
   },
   "devDependencies": {
-    "eslint": "^6.3.0",
-    "eslint-config-airbnb-base": "^13.2.0",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint": "^8.36.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.27.5"
   }
 }
