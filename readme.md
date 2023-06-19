@@ -1,125 +1,106 @@
 <p align="center">
-  <img src="images/architecture.png" alt="Kafka demo architecture" width="500"/>
+  <img src="images/architecture.jpg" alt="Kafka demo architecture" width="5323"/>
 </p>
-
 
 # Overview
 
-Simple Apache Kafka queue demonstration with retry option. Every Kafka message contains subscription data for an email campaign.
-The provider consumer will try to add the subscription to the campaign. If this fails then the message will handover to retry
-consumer with failing reason and timestamp. If the retry consumer fails then it will go to the failed queue,
-and this needs to be handled manually.
+This is a straightforward demonstration of an Apache Kafka with NodeJS, featuring a dead letter queue functionality.
+Each message in the Kafka queue contains subscription data for an email campaign. The contact submission consumer's main
+task is to attempt the submission of the subscription data to a campaign API. In the event of a failure during this
+process, the message will be forwarded to the dead letter queue. Here, it will be accompanied by a reason for the
+failure and a timestamp, providing valuable information about the unsuccessful attempt.
 
-## Pre-requisites
+### Pre-requisites
 
-* Install kafka from official [guide](https://kafka.apache.org/quickstart) or you can follow this [guide](./kafka-installation-guide.md)
-* Nodejs > 8.5.0, should run on any version of node 8.
+* Docker or you can setup kafka on your own
+* Nodejs >= 18.12.0.
 
-## Step 1: Start the server
+### Step 1: Bootstrap kafka
 
-Start a ZooKeeper server. Kafka has a single node Zookeeper configuration built-in.
+The provided docker compose file offers a easy quick setup for Kafka.
+
 ```
-$ bin/zookeeper-server-start.sh config/zookeeper.properties &
-```
-Now start Kafka itself:
-```
-$ bin/kafka-server-start.sh config/server.properties &
+docker-compose up -d
 ```
 
-## Step 2: Create topics
-```
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 4 --topic provider
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic provider-retry
-$ bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 2 --topic provider-failed
-```
-These can be easily listed
-```
-$ bin/kafka-topics.sh --list --zookeeper localhost:2181
-provider
-provider-retry
-provider-failed
-```
-Note: In production disable topics auto creation `auto.create.topics.enable=false`
+### Step 2: Create topics
 
-## Step 3: Install package from npm
+To utilize the following commands, please download Kafka from official website to your local machine and navigate to
+the `bin` directory.
+
+```
+./kafka-topics.sh --create --bootstrap-server 127.0.0.1:9094 --replication-factor 1 --partitions 4 --topic contact-submission-queue
+./kafka-topics.sh --create --bootstrap-server 127.0.0.1:9094 --replication-factor 1 --partitions 2 --topic dead-letter-queue
+```
+
+Created topics can be easily listed by running following command.
+
+```
+./kafka-topics.sh --list --bootstrap-server 127.0.0.1:9094
+```
+
+Output should be something like:
+
+```
+contact-submission-queue
+dead-letter-queue
+```
+
+### Step 3: Install packages from npm
+
 ```
 $ npm i
 ```
 
-## Step 4: Setup environment variables
+### Step 4: Setup environment variables
 
-Copy .env.example to .env. Create a dummy campaign list at [klaviyo](https://klaviyo.com) and replace .env configuration with your credentials.
+Copy `.env.example` to `.env`. Create a dummy campaign list at [klaviyo](https://klaviyo.com) and replace `.env`
+configuration with your credentials.
 
-## Step 5: Start consumers
+### Step 5: Start consumers
 
-```
-$ node src/provider.js
-$ node src/providerRetry.js
-```
-
-Alternative way with pm2
+The contact submission service is designed to retrieve messages from the `contact-submission-queue` and attempt to submit
+contact data to a third-party API. Contact submission service will join into a Kafka consumer group, you can deploy multiple
+instances of this service in various locations, enabling parallel processing of messages.
 
 ```
-$ pm2 start pm2.json
+node src/contactSubmission.js
 ```
 
-## Step 6: Send data to producer
+In the event of a failed contact submission due to an API error, the data will be moved to a dead letter, allowing for
+later analysis and investigation.
 
 ```
-$ node test/sendTestData.js
-Sent msg number 0
+node src/deadLetter.js
+```
+
+### Step 6: Send data to producer
+
+```
+node src/sendTestData.js
+send to >>> contact-submission-queue - 1
 ...
-Sent msg number 1000
+send to >>> contact-submission-queue - 3
 ```
 
-## Remote listener binding
-
-Hostname and port the broker will advertise to producers and consumers. If not set,
-it uses the value for "listeners" if configured.  Otherwise, it will use the value
-returned from java.net.InetAddress.getCanonicalHostName().
-```
-#advertised.listeners=PLAINTEXT://your.host.name:9092
-```
-
-## Useful commands
+#### Useful commands
 
 Describe a topic:
+
 ```
-bin/kafka-topics.sh --describe --zookeeper localhost:2181 --topic provider
+bin/kafka-topics.sh --describe --bootstrap-server 127.0.0.1:9094 --topic provider
 ```
 
 Increase topic partitions:
-```
-bin/kafka-topics.sh --zookeeper localhost:2181 --alter --topic provider --partitions 4
-```
-
-## Cleaning Up
-Stop Kafka and Zookeeper and delete the log directories
 
 ```
-$ project-dir
-bin/kafka-server-start.sh config/server.properties
-^C
-$ kill -9 [PID]
+bin/kafka-topics.sh --bootstrap-server 127.0.0.1:9094 --alter --topic provider --partitions 4
 ```
 
-```
-$ project-dir
-bin/zookeeper-server-start.sh config/zookeeper.properties
-^C
-$ kill -9 [PID]
-```
+### Author
 
-```
-$ rm -rf /tmp/zookeeper/version-2/log.* && rm -rf /tmp/kafka-logs/
-```
+**Joynal Abedin** - [Joynal](https://linkedin.com/in/joynaluu/)
 
-Note: find process id number with `ps aux | grep zookeeper.properties`
-
-## Author
-
-**Joynal Abedin** - [Joynal](https://twitter.com/joynaluu)
-
-## License
+### License
 
 This project is licensed under the MIT License - see the [license.md](./license.md) file for details

@@ -1,24 +1,6 @@
-const kafka = require('kafka-node');
+import { kafka } from './kafkaClient.js'
 
-const { HighLevelProducer } = kafka;
-const Client = kafka.KafkaClient;
-
-const config = require('../config');
-
-const client = new Client({
-  kafkaHost: config.kafkaServerUrl,
-  noAckBatchOptions: {
-    noAckBatchSize: config.noAckBatchSize,
-    noAckBatchAge: config.noAckBatchAge,
-  },
+export default kafka.producer({
+  allowAutoTopicCreation: false,
+  transactionTimeout: 30000
 });
-
-const producer = new HighLevelProducer(client, {
-  requireAcks: config.producerAcks,
-});
-
-producer.on('error', (err) => {
-  console.error('producer error ---------->', err);
-});
-
-module.exports = producer;

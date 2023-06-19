@@ -1,18 +1,15 @@
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
+import producer from './producer.js';
+import { deadLetterQueue, klaviyoApiKey, klaviyoURL } from '../config.js';
 
-const producer = require('./producer');
-const { sendToQueue } = require('./utils');
-
-const config = require('../config');
-
-module.exports = async (message, nextTopic = null) => {
+export default async (message) => {
   try {
-    const response = await fetch(config.klaviyoURL, {
+    const response = await fetch(klaviyoURL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'api-key': config.klaviyoApiKey,
+        'api-key': klaviyoApiKey,
       },
       body: message,
     });
@@ -21,14 +18,17 @@ module.exports = async (message, nextTopic = null) => {
     console.log('Klaviyo response ----------->', json);
     if (response.status !== 200) throw new Error(json.message);
   } catch (err) {
-    console.error('Klaviyo sending error ----------->', err);
-
-    if (nextTopic) {
-      console.log(`Sending message to ${nextTopic}`);
-      const messageCopy = JSON.parse(message);
-      messageCopy.timestamp = Date.now();
-      messageCopy.failingReason = err.message;
-      sendToQueue(producer, nextTopic, JSON.stringify(messageCopy));
-    }
+    console.log(`Sending message to ${deadLetterQueue}`);
+    await producer.connect();
+    await producer.send({
+      topic: deadLetterQueue,
+      messages: [{
+        value: JSON.stringify({
+          ...JSON.parse(message.toString()),
+          failingReason: err.message
+        })
+      }]
+    });
+    await producer.disconnect();
   }
 };

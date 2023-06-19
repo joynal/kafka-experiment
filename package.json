@@ -1,27 +1,26 @@
 {
   "name": "kafka-experiment",
   "author": "Joynal Abedin <joynal.uu@gmail.com>",
-  "version": "0.0.2",
-  "description": "Kafka experiment",
-  "scripts": {
-    "start": "node ./src/provider.js"
-  },
   "license": "MIT",
   "keywords": [
     "kafka",
-    "node",
-    "node-kafka"
+    "nodejs"
   ],
   "dependencies": {
-    "date-fns": "^2.29.3",
-    "dotenv": "^16.0.3",
-    "faker": "^6.6.6",
-    "kafka-node": "^5.0.0",
+    "@faker-js/faker": "^8.0.2",
+    "dotenv": "^16.3.1",
+    "kafkajs": "^2.2.4",
     "node-fetch": "^3.3.1"
   },
   "devDependencies": {
-    "eslint": "^8.36.0",
+    "@babel/eslint-parser": "^7.22.5",
+    "eslint": "^8.43.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5"
+  },
+  "type": "module",
+  "engines": {
+    "node": "^18.12.0",
+    "npm": "^8.19.2"
   }
 }
